@@ -17,7 +17,7 @@ func main() {
 
 	mysqlUser := os.Getenv("MYSQL_USER")
 	mysqlPass := os.Getenv("MYSQL_PASSWORD")
-	backupDir, err := backup(mysqlUser, mysqlPass)
+	err = backup(mysqlUser, mysqlPass)
 	if err != nil {
 		log.Panicln(err)
 	}

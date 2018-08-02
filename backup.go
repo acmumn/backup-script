@@ -1,24 +1,38 @@
 package main
 
-import "os/exec"
+import (
+	"fmt"
+	"os/exec"
+)
 
-func backup(user, pass string) (string, error) {
-	cmd := exec.Command("mariabackup", "--defaults-file", "/dev/stdin", "--backup", "--target-dir", dir)
+func backup(user, pass, dir, baseDir string) (string, error) {
+	args := []string{
+		"--defaults-file", "/dev/stdin", "--backup", "--target-dir", dir,
+	}
+	if baseDir != "" {
+		args = append(args, "--incremental-basedir", baseDir)
+	}
+	cmd := exec.Command("mariabackup", *args)
+
 	err := cmd.Start()
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	// TODO
-
-	err = cmd.Wait()
+	_, err = fmt.Fprintf(stdin, "[client]\nusername = %s\npassword = %q\n", user, pass)
 	if err != nil {
-		return "", err
+		return err
 	}
-	return dir, err
+
+	err = stdin.Close()
+	if err != nil {
+		return err
+	}
+
+	return cmd.Wait()
 }
