@@ -17,29 +17,16 @@ func main() {
 
 	mysqlUser := os.Getenv("MYSQL_USER")
 	mysqlPass := os.Getenv("MYSQL_PASSWORD")
+	backupDir, err := backup(mysqlUser, mysqlPass)
+	if err != nil {
+		log.Panicln(err)
+	}
+
 	secretKey := os.Getenv("SECRET_KEY")
 	s3Bucket := os.Getenv("S3_BUCKET")
 
 	sess := session.Must(session.NewSession())
 	uploader := s3manager.NewUploader(sess)
-}
-
-func backup(user, pass string) (string, error) {
-	cmd := exec.Command("mariabackup", "--defaults-file", "/dev/stdin", "--backup", "--target-dir", dir)
-	err := cmd.Start()
-	if err != nil {
-		return "", err
-	}
-
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return "", err
-	}
 
 	// TODO
-
-	err := cmd.Wait()
-	if err != nil {
-		return "", err
-	}
 }
