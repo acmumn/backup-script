@@ -44,11 +44,13 @@ func backup(mysql MysqlConfig, dir, baseDir string) error {
 		return err
 	}
 
-	args := []string{
-		"--defaults-file=" + f.Name(), "--backup", "--target-dir", dir,
-	}
-	if baseDir != "" && IsDir(baseDir) {
-		args = append(args, "--incremental-basedir", baseDir)
+	args := []string{"--defaults-file=" + f.Name(), "--backup", "--target-dir", dir}
+	if baseDir != "" {
+		if IsDir(baseDir) {
+			args = append(args, "--incremental-basedir", baseDir)
+		} else {
+			log.Printf("`%s' does not exist. Doing a full backup instead.", baseDir)
+		}
 	}
 
 	cmd := exec.Command("mariabackup", args...)
