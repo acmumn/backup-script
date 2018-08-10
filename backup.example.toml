@@ -1,0 +1,21 @@
+[mysql]
+user = "backup"
+pass = "backup"
+host = "localhost"
+port = 3306
+
+[aws]
+secret_key = "secret key"
+s3_bucket = "TODO"
+
+[schedule.daily]
+incremental = true
+
+[schedule.weekly]
+incremental = true
+
+[schedule.monthly]
+incremental = true
+
+[schedule.yearly]
+incremental = true

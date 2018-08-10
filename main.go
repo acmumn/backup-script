@@ -1,32 +1,20 @@
 package main
 
-import (
-	"log"
-	"os"
-
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/joho/godotenv"
-)
+import "log"
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	mysql, aws, schedule := LoadConfig("backup.toml")
+	_, _ = aws, schedule
 
-	mysqlUser := os.Getenv("MYSQL_USER")
-	mysqlPass := os.Getenv("MYSQL_PASSWORD")
-	err = backup(mysqlUser, mysqlPass)
-	if err != nil {
+	if err := backup(mysql, "backup", "basedir"); err != nil {
 		log.Panicln(err)
 	}
 
-	secretKey := os.Getenv("SECRET_KEY")
-	s3Bucket := os.Getenv("S3_BUCKET")
+	//secretKey := os.Getenv("SECRET_KEY")
+	//s3Bucket := os.Getenv("S3_BUCKET")
 
-	sess := session.Must(session.NewSession())
-	uploader := s3manager.NewUploader(sess)
+	//sess := session.Must(session.NewSession())
+	//uploader := s3manager.NewUploader(sess)
 
-	// TODO
+	//// TODO
 }
